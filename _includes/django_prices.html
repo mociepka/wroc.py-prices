@@ -1,0 +1,41 @@
+<section>
+    <section>
+        <h2>Django prices</h2>
+        <ul>
+            <li>field oraz model field które działają na prices</li>
+            <li>templatetagi do prostej manipulacji obiektem price w templateach</li>
+            <li>integracja z biblioteką babel</li>
+        </ul>
+    </section>
+    <section>
+        <h3>ModelField</h3>
+        <pre><code class="python">from django.db import models
+
+from django_prices.models import PriceField
+
+class Product(models.Model):
+    name = models.CharField('Name')
+    price = PriceField('Price', currency='BTC')</code></pre>
+        <h3>FormField</h3>
+        <pre><code class="python">from django import forms
+
+from django_prices.forms import PriceField
+
+class ProductForm(forms.Form):
+    name = forms.CharField(label='Name')
+    price = PriceField(label='Price', currency='PLN')</code></pre>
+    </section>
+    <section>
+        {% raw  %}
+        <h3>Templatetags</h3>
+        <pre><code class="html">{% load prices %}
+
+<p>Price: {% gross foo.price %} ({% net foo.price %}</p>
+<p>{% tax foo.price %} tax)</p></code></pre>
+        <pre><code class="html">{% load prices_i18n %}
+
+<p>Price: {% gross foo.price %} ({% net foo.price %}</p>
+<p>{% tax foo.price %} tax)</p></code></pre>
+        {% endraw %}
+    </section>
+</section>
