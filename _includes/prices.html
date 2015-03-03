@@ -19,13 +19,15 @@
         <pre><code class="python">>>> from prices import Price, PriceRange, LinearTax
 >>> price = Price('1.99')
 >>> price += Price(50)
->>> tax = LinearTax('0.23', '23% VAT')
+>>> price
+Price('51.99', currency=None)
+        </code></pre><pre class="fragment"><code class="python">>>> tax = LinearTax('0.23', '23% VAT')
 >>> price = tax.apply(price)
 >>> price
 Price(net='51.99', gross='63.9477', currency=None)
 >>> price.quantize('0.01').gross
 Decimal('63.95')
->>> price_range = PriceRange(Price(50), Price(100))
+        </code></pre><pre class="fragment"><code class="python">>>> price_range = PriceRange(Price(50), Price(100))
 >>> price in price_range
 True
 >>> inspect_price(price)

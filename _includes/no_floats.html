@@ -10,22 +10,35 @@
         <pre class="fragment"><code>>>> '%.53f' % 0.1
 '0.10000000000000000555111512312578270211815834045410156'</code></pre>
         <aside class="notes">
-            Co tu właściwie zaszło? Konsola nas ztrolowała. Wpisując liczbę 0.1 a w pamięci binarny reprezentacja liczby 0.1
-            jest zupełnie inna. Niestety przez konsolę wielu programistów pythona zapomina o tym problemie.
+            <ul>
+                <li>
+                    Od najmłodszych lat wpajany jest nam system dziesiętny, zaczynamy liczyć na 10 palcach, niestety komputery działają w systemie binarnym.
+                </li>
+                <li>
+                    Niestety konsola pythona nie ułatwia nam zrozumienia problemu.
+                </li>
+                <li>
+                    Co tu właściwie zaszło? Konsola nas ztrolowała. Wpisując liczbę 0.1 a w pamięci binarny reprezentacja liczby 0.1 jest zupełnie inna.
+                    Niestety przez konsolę wielu programistów pythona zapomina o tym problemie.
+                </li>
+            </ul>
         <aside>
     </section>
 
     <section>
-        <pre><code>>>> (1.1 + 2.2 - 3.3) * 1e18</code><code class="fragment">4440.892098500626</code></pre>
+        <pre><code>>>> 1.1 + 2.2 - 3.3</code><code class="fragment">4.440892098500626e-16</code></pre>
         <pre class="fragment"><code>0.1 * 10 == sum(0.1 for i in range(10))
 False</code></pre>
         <aside class="notes">
-            Ok, ale co z tego? Błąd jest rzędu pięcu tryliardowych. Błąd może i być mały ale głównym
+            <p>
+                Ok, ale co z tego? Błąd jest rzędu pięcu tryliardowych. Błąd może i być mały ale głównym
             problemem jest maszyna licząca w naszym mózgu. Widząc takie równanie człowiek nie zastanawia
             się jak te liczby wyglądają w zapisie binarnym. Na język w tym przypadku ciśnie się zero.
-
-            W drugim przypadku aż ciśnie się na język odpowiedź true. Przecież o d podstawówki nam powtarzają
+            </p>
+            <p>
+                W drugim przypadku aż ciśnie się na język odpowiedź true. Przecież o d podstawówki nam powtarzają
             że mnożenie to tylko sktucenie dodawania.
+            </p>
         </aside>
     </section>
 
@@ -43,13 +56,16 @@ sys.float_info(
     rounds=1)</code></pre-->
 
         <aside class="notes">
+            <p>
             Ograniczona pamięć nie tyczy się tylko ułamków nie wymiernych ale większości ułamków dziesiętnych.
             Im większa precyzja która powiązana jest z liczbą pamięci tym mniejszy błąd. Jak wspomniałem wcześniej
             precyzja floata w pythoonie to 53 czyli jest to podwójna precyzja.
-
-            Ciekawostką jest, że pierwszy standard floating points IEEE 754 napisany w 1985r. zakładał możliwość
+            </p>
+            <p>
+            Ciekawostką jest, że pierwszy standard floating points <b>IEEE 754</b> napisany w 1985r. zakładał możliwość
             używania artmetyki liczb 2 i 10 ale dopiero w 2005 IBM skonstruował procesor z900 który żeczywiście
             działał na liczbach dziesiętnych.
+            </p>
         </aside>
     </section>
 </section>
