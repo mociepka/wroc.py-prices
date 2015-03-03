@@ -1,11 +1,12 @@
 <section>
     <section>
         <h2>Python price handling for humans</h2>
-        <ul>
-            <li>obsługa ceny neto, brutto</li>
+        <p><a href="https://github.com/mirumee/prices">https://github.com/mirumee/prices</a></p>
+        <ul class="fragment">
+            <li>obsługa ceny netto, brutto</li>
             <li>obsługa zniżek oraz podatków</li>
             <li>obsługa wielu walut</li>
-            <li>proste debugowanie dzięki histori operacji na obiekcie</li>
+            <li>proste debugowanie dzięki historii operacji na obiekcie</li>
             <li>możliwość definiowania przedziałów cenowych</li>
         </ul>
         <aside class="notes">
@@ -14,38 +15,62 @@
             jako decimale.
         </aside>
     </section>
+
     <section>
-        <h2>Przykłady użycia</h2>
-        <pre><code class="python">>>> from prices import Price, PriceRange, LinearTax
->>> price = Price('1.99')
->>> price += Price(50)
+        <h2>ceny netto, brutto</h2>
+        <pre><code class="python">>>> from prices import Price
+>>> Price('1.99') + Price(50)
+Price('51.99', currency=None)</code></pre>
+        <pre><code class="python">>>> from prices import Price
+>>> price = Price(net='1', gross='1.2') + Price(net=2, gross=4)
 >>> price
-Price('51.99', currency=None)
-        </code></pre><pre class="fragment"><code class="python">>>> tax = LinearTax('0.23', '23% VAT')
->>> price = tax.apply(price)
->>> price
-Price(net='51.99', gross='63.9477', currency=None)
->>> price.quantize('0.01').gross
-Decimal('63.95')
-        </code></pre><pre class="fragment"><code class="python">>>> price_range = PriceRange(Price(50), Price(100))
->>> price in price_range
-True
->>> inspect_price(price)
-"((Price('1.99', currency=None) + Price('50', currency=None)) | LinearTax('0.23', name='23% VAT'))"
-</code></pre>
-        <pre class="fragment"><code class="python">>>> Price(net=10, gross=12) + Price(net=20)
-Price(net='30', gross='32', currency=None)</code></pre>
+Price(net='3', gross='5.2', currency=None)
+>>> price.net
+Decimal('3')
+>>> price.gross
+Decimal('5.2')
+>>> price.tax
+Decimal('2.2')</code></pre>
     </section>
-        <section>
+
+    <section>
+        <h2>zniżki oraz podatki</h2>
+        <pre><code class="python">>>> from prices import Price
+>>> price = Price('1.99')
+>>> tax = LinearTax('0.23', '23% VAT')
+>>> tax.apply(price)
+Price(net='1.99', gross='2.4477', currency=None)</code></pre>
+    </section>
+
+    <section>
+        <h2>wiele walut</h2>
+        <pre><code class="python">>>> from prices import Price, LinearTax
+>>> Price('1.99', currency='PLN')
+Price('1.99', currency='PLN')</code></pre>
+    </section>
+
+    <section>
+        <h2>histora operacji</h2>
+        <pre><code class="python">>>> from prices import Price, LinearTax
+>>> price = Price('1.99') + Price(50) | LinearTax('0.23', '23% VAT')
+>>> inspect_price(price)
+((Price('1.99', currency=None) + Price('50', currency=None)) | LinearTax('0.23', name='23% VAT'))
+        </code></pre>
+    </section>
+
+    <section>
+        <h2>możliwość definiowania przedziałów cenowych</h2>
+        <pre><code class="python">>>> from prices import Price, LinearTax
+>>> price = Price(70)
+>>> price_range = PriceRange(Price(50), Price(100))
+>>> price in price_range
+True</code></pre>
+    </section>
+
+    <section>
         <h2>Prices na straży</h2>
-        <pre><code class="python">>>> from prices import Price, inspect_price
->>> Price(10, currency='USD') + Price(10, currency='PLN')
-ValueError: Cannot add price in 'USD' to 'PLN'</code></pre>
 
-        <pre class="fragment"><code class="python">>>> Price(10, currency='USD') < Price(10, currency='PLN')
-ValueError: Cannot compare prices in 'USD' and 'PLN'</code></pre>
-
-        <pre class="fragment"><code class="python">>>> Price(1.2)
+        <pre><code class="python">>>> Price(1.2)
 __main__:1: RuntimeWarning: You should never use floats when dealing with prices!
 Price('1.1999999999999999555910790149937383830547332763671875', currency=None)</code></pre>
 
@@ -53,5 +78,11 @@ Price('1.1999999999999999555910790149937383830547332763671875', currency=None)</
 Decimal('2')
 >>> Price('2.5').quantize(Decimal('0'))
 Price('3', currency=None)</code></pre>
+
+        <pre class="fragment"><code class="python">>>> Price(10, currency='USD') + Price(10, currency='PLN')
+ValueError: Cannot add price in 'USD' to 'PLN'</code></pre>
+
+        <pre class="fragment"><code class="python">>>> Price(10, currency='USD') < Price(10, currency='PLN')
+ValueError: Cannot compare prices in 'USD' and 'PLN'</code></pre>
     </section>
 </section>

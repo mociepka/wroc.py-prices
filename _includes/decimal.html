@@ -9,8 +9,7 @@
 Context(
     prec=28, rounding=ROUND_HALF_EVEN, Emin=-999999,
     Emax=999999, capitals=1, clamp=0, flags=[],
-    traps=[InvalidOperation, DivisionByZero, Overflow])
-            </code></pre>
+    traps=[InvalidOperation, DivisionByZero, Overflow])</code></pre>
             </li>
         </ul>
         <aside class="notes">
@@ -49,15 +48,15 @@ Context(
     <section>
         <h2>Zapis liczby</h2>
         <pre><code>c = -1
-m = -1</code></pre>
+m = -2</code></pre>
         <p class="math-block fragment">
-            $$W = -1 \times 10^{-1}$$
+            $$W = -2 \times 10^{-1}$$
         </p>
         <p class="math-block fragment">
-            $$W = -0.1$$
+            $$W = -0.2$$
         </p>
         <pre class="fragment"><code>W = (znak, mantysa, cecha)</code></pre>
-        <pre class="fragment"><code>W = (1, 1, -1)</code></pre>
+        <pre class="fragment"><code>W = (1, 2, -1)</code></pre>
         <aside class="notes">
             Dla liczb dziesiętnych podstawa będzie równa 10 a dla liczb binarnych dwa.
             Znając te założenia liczbę 0.1 możemy zapisać za pomocą liczb -1 oraz 1.
