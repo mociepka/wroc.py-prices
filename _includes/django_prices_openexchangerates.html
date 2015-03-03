@@ -1,0 +1,30 @@
+<section>
+    <section>
+        <h2>django prices openexchange rates</h2>
+        <ul>
+            <li>synchronizacja kursu walut z openexchangerates.org</li>
+            <li>proste api do przeliczania obiektów price</li>
+            <li>templatetagi do prostej manipulacji obiektem price w templateach</li>
+        </ul>
+    </section>
+    <section>
+        <h3>Price converting</h3>
+        <pre><code class="python">>>> from prices import Price, inspect_price
+>>> from django_prices_openexchangerates import exchange_currency
+>>> converted_price = exchange_currency(Price(10, currency='USD'), 'EUR')
+>>> converted_price
+Price('8.84040', currency='EUR')
+>>> inspect_price(converted_price)
+(Price('10', currency='USD') | CurrencyConversion('USD', 'EUR', rate=Decimal('0.88404')))</code></pre>
+        <h3>Templatetags</h3>
+        {% raw %}
+        <pre><code class="html">{% load prices_multicurrency %}
+
+<p>
+    Price: {% gross_in_currency foo.price 'USD' %}
+    ({% net_in_currency foo.price 'USD' %}
+    {% tax_in_currency foo.price 'USD' %} tax)
+</p></code></pre>
+        {% endraw %}
+    </section>
+</section>

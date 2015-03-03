@@ -17,14 +17,20 @@
     <section>
         <h2>Przykłady użycia</h2>
         <pre><code class="python">>>> from prices import Price, PriceRange, LinearTax
->>> p = Price('1.99')
->>> p += Price(50)
->>> p += LinearTax('0.23', '23% VAT')
->>> print p.quantize('0.01').gross
+>>> price = Price('1.99')
+>>> price += Price(50)
+>>> tax = LinearTax('0.23', '23% VAT')
+>>> price = tax.apply(price)
+>>> price
+Price(net='51.99', gross='63.9477', currency=None)
+>>> price.quantize('0.01').gross
 Decimal('63.95')
->>> pr = PriceRange(Price(50), Price(100))
->>> print p in pr
-True</code></pre>
+>>> price_range = PriceRange(Price(50), Price(100))
+>>> price in price_range
+True
+>>> inspect_price(price)
+"((Price('1.99', currency=None) + Price('50', currency=None)) | LinearTax('0.23', name='23% VAT'))"
+</code></pre>
         <pre class="fragment"><code class="python">>>> Price(net=10, gross=12) + Price(net=20)
 Price(net='30', gross='32', currency=None)</code></pre>
     </section>
