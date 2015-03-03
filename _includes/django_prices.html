@@ -31,12 +31,16 @@ class ProductForm(forms.Form):
         <h3>Templatetags</h3>
         <pre><code class="html">{% load prices %}
 
-<p>Price: {% gross foo.price %} ({% net foo.price %}</p>
-<p>{% tax foo.price %} tax)</p></code></pre>
+<p>
+    Price: {% gross foo.price %}
+    ({% net foo.price %} {% tax foo.price %} tax)
+</p></code></pre>
         <pre><code class="html">{% load prices_i18n %}
 
-<p>Price: {% gross foo.price %} ({% net foo.price %}</p>
-<p>{% tax foo.price %} tax)</p></code></pre>
+<p>
+    Price: {% gross foo.price %}
+    ({% net foo.price %} {% tax foo.price %} tax)
+</p></code></pre>
         {% endraw %}
     </section>
 </section>

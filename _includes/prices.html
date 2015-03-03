@@ -35,7 +35,12 @@ Decimal('2.2')</code></pre>
 
     <section>
         <h2>zniżki oraz podatki</h2>
-        <pre><code class="python">>>> from prices import Price
+        <pre><code class="python">>>> from prices import Price, FixedDiscount
+>>> price = Price('1.99')
+>>> discount = FixedDiscount(Price(1))
+>>> discount.apply(price)
+Price('0.99', currency=None)</code></pre>
+    <pre><code class="python">>>> from prices import Price, LinearTax
 >>> price = Price('1.99')
 >>> tax = LinearTax('0.23', '23% VAT')
 >>> tax.apply(price)
@@ -44,7 +49,7 @@ Price(net='1.99', gross='2.4477', currency=None)</code></pre>
 
     <section>
         <h2>wiele walut</h2>
-        <pre><code class="python">>>> from prices import Price, LinearTax
+        <pre><code class="python">>>> from prices import Price
 >>> Price('1.99', currency='PLN')
 Price('1.99', currency='PLN')</code></pre>
     </section>
@@ -60,7 +65,7 @@ Price('1.99', currency='PLN')</code></pre>
 
     <section>
         <h2>możliwość definiowania przedziałów cenowych</h2>
-        <pre><code class="python">>>> from prices import Price, LinearTax
+        <pre><code class="python">>>> from prices import Price, PriceRange
 >>> price = Price(70)
 >>> price_range = PriceRange(Price(50), Price(100))
 >>> price in price_range
