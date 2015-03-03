@@ -1,0 +1,171 @@
+<section>
+    <section>
+        <h2>Moduł decimal w pythonie</h2>
+        <ul>
+            <li><a href="http://speleotrove.com/decimal/">IBM’s General Decimal Arithmetic Specification</a></li>
+            <li>Kontekst:
+            <pre class="stretch"><code class="python">>>> from decimal import getcontext
+>>> getcontext()
+Context(
+    prec=28, rounding=ROUND_HALF_EVEN, Emin=-999999,
+    Emax=999999, capitals=1, clamp=0, flags=[],
+    traps=[InvalidOperation, DivisionByZero, Overflow])
+            </code></pre>
+            </li>
+        </ul>
+        <aside class="notes">
+            Tak jak wspomniałem wcześniej standard IEEE floating points zawierał także specyfikacje
+            dla artmetyki liczb dziesiętnych i właśnie ta specyfikacja została wdrożona w Pythonie.
+
+            A sami autory posłużyli się specyfikacją od IBM'a która to opisuje także metody które powinny być
+            zaimplementowane.
+        </aside>
+    </section>
+    <section>
+        <h2>Rounding</h2>
+        <h3>ROUND_HALF_EVEN</h3>
+        <pre><code class="python">>>> Decimal('1.5').quantize(Decimal('0'))</code><code class="python fragment">Decimal('2')</code></pre>
+        <pre><code class="python">>>> Decimal('2.5').quantize(Decimal('0'))</code><code class="python fragment">Decimal('2')</code></pre>
+        <h3>ROUND_HALF_UP</h3>
+        <pre><code class="python">>>> Decimal('1.5').quantize(Decimal('0'), ROUND_HALF_UP)</code><code class="python fragment">Decimal('2')</code></pre>
+        <pre><code class="python">>>> Decimal('2.5').quantize(Decimal('0'), ROUND_HALF_UP)</code><code class="python fragment">Decimal('3')</code></pre>
+    </section>
+    <section>
+        <h2>Dlaczego decimal nie traci na wartości</h2>
+        <blockquote>
+            $$W = m \times p^c$$
+        </blockquote>
+        <ul>
+            <li>W - wartość liczby</li>
+            <li>m - mantysa</li>
+            <li>p - podstawa</li>
+            <li>c - cecha</li>
+        </ul>
+        <aside class="notes">
+            Zapis binarny jak i zapis dziesiętny sprowadza się do tego samego wzoru.
+            Z pewnymi założeniami wszystkie liczby wymierne da się zapisać w postaci dwóch liczb całkowitych.
+        </aside>
+    </section>
+    <section>
+        <h2>Zapis liczby</h2>
+        <pre><code>c = -1
+m = -1</code></pre>
+        <p class="math-block">
+            $$W = -1 \times 10^{-1}$$ <br/>
+            <span class="fragment">$$W = -0.1$$</span>
+        </p>
+        <pre class="fragment"><code>W = (1, 1, -1)</code></pre>
+        <aside class="notes">
+            Dla liczb dziesiętnych podstawa będzie równa 10 a dla liczb binarnych dwa.
+            Znając te założenia liczbę 0.1 możemy zapisać za pomocą liczb -1 oraz 1.
+
+            Chcąc zwiększyć ilość liczb które możemy zapisać w mantysie wyciągniemy znak do osobnego bitu.
+        </aside>
+    </section>
+    <section>
+        <h2>Arytmetyka</h2>
+        <p class="math-block">
+            $$x = 0.1 + 0.01$$
+        </p>
+        <pre class="fragment"><code class="python">x = (0, 1, -1) + (0, 1, -2)</code></pre>
+        <pre class="fragment"><code class="python">x = (0, 10, -2) + (0, 1, -2)</code></pre>
+        <pre class="fragment"><code class="python">x = (0, 11, -2)</code></pre>
+        <p class="math-block fragment">
+            $$x = 0.11$$
+        </p>
+        <aside class="notes">
+            Dzięki takiemu zapisowi wszystkie operacje arytmetyczne sprowadzają się do:
+            sprowadzenia caechy do tej samej wartości,
+            odpowiedniego działania na mantysie,
+            ustawienia odpowiedniego znaku.
+        </aside>
+    </section>
+    <section>
+        <h2>decimal.py</h2>
+        <pre class="stretch"><code class="python">def __add__(self, other, context=None):
+"""Returns self + other.
+
+-INF + INF (or the reverse) cause InvalidOperation errors.
+"""
+other = _convert_other(other)
+if other is NotImplemented:
+    return other
+
+if context is None:
+    context = getcontext()
+
+if self._is_special or other._is_special:
+    ans = self._check_nans(other, context)
+    if ans:
+        return ans
+
+    if self._isinfinity():
+        # If both INF, same sign => same as both, opposite => error.
+        if self._sign != other._sign and other._isinfinity():
+            return context._raise_error(InvalidOperation, '-INF + INF')
+        return Decimal(self)
+    if other._isinfinity():
+        return Decimal(other)  # Can't both be infinity here
+
+exp = min(self._exp, other._exp)
+negativezero = 0
+if context.rounding == ROUND_FLOOR and self._sign != other._sign:
+    # If the answer is 0, the sign should be negative, in this case.
+    negativezero = 1
+
+if not self and not other:
+    sign = min(self._sign, other._sign)
+    if negativezero:
+        sign = 1
+    ans = _dec_from_triple(sign, '0', exp)
+    ans = ans._fix(context)
+    return ans
+if not self:
+    exp = max(exp, other._exp - context.prec-1)
+    ans = other._rescale(exp, context.rounding)
+    ans = ans._fix(context)
+    return ans
+if not other:
+    exp = max(exp, self._exp - context.prec-1)
+    ans = self._rescale(exp, context.rounding)
+    ans = ans._fix(context)
+    return ans
+
+op1 = _WorkRep(self)
+op2 = _WorkRep(other)
+op1, op2 = _normalize(op1, op2, context.prec)
+
+result = _WorkRep()
+if op1.sign != op2.sign:
+    # Equal and opposite
+    if op1.int == op2.int:
+        ans = _dec_from_triple(negativezero, '0', exp)
+        ans = ans._fix(context)
+        return ans
+    if op1.int < op2.int:
+        op1, op2 = op2, op1
+        # OK, now abs(op1) > abs(op2)
+    if op1.sign == 1:
+        result.sign = 1
+        op1.sign, op2.sign = op2.sign, op1.sign
+    else:
+        result.sign = 0
+        # So we know the sign, and op1 > 0.
+elif op1.sign == 1:
+    result.sign = 1
+    op1.sign, op2.sign = (0, 0)
+else:
+    result.sign = 0
+# Now, op1 > abs(op2) > 0
+
+if op2.sign == 0:
+    result.int = op1.int + op2.int
+else:
+    result.int = op1.int - op2.int
+
+result.exp = op1.exp
+ans = Decimal(result)
+ans = ans._fix(context)
+return ans</code></pre>
+    </section>
+</section>

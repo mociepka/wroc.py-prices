@@ -1,0 +1,55 @@
+<section>
+    <section>
+        <h2>Dlaczego nie float?</h2>
+
+        <pre class="fragment"><code>>>> 0.1
+0.1</code></pre>
+        <pre class="fragment"><code>>>> 0.1 + 0.1
+0.2</code></pre>
+        <pre class="fragment"><code>>>> 0.1 + 0.1 + 0.1</code><code class="fragment">0.30000000000000004</code></pre>
+        <pre class="fragment"><code>>>> '%.53f' % 0.1
+'0.10000000000000000555111512312578270211815834045410156'</code></pre>
+        <aside class="notes">
+            Co tu właściwie zaszło? Konsola nas ztrolowała. Wpisując liczbę 0.1 a w pamięci binarny reprezentacja liczby 0.1
+            jest zupełnie inna. Niestety przez konsolę wielu programistów pythona zapomina o tym problemie.
+        <aside>
+    </section>
+
+    <section>
+        <pre><code>>>> (1.1 + 2.2 - 3.3) * 1e18</code><code class="fragment">4440.892098500626</code></pre>
+        <pre class="fragment"><code>0.1 * 10 == sum(0.1 for i in range(10))
+False</code></pre>
+        <aside class="notes">
+            Ok, ale co z tego? Błąd jest rzędu pięcu tryliardowych. Błąd może i być mały ale głównym
+            problemem jest maszyna licząca w naszym mózgu. Widząc takie równanie człowiek nie zastanawia
+            się jak te liczby wyglądają w zapisie binarnym. Na język w tym przypadku ciśnie się zero.
+
+            W drugim przypadku aż ciśnie się na język odpowiedź true. Przecież o d podstawówki nam powtarzają
+            że mnożenie to tylko sktucenie dodawania.
+        </aside>
+    </section>
+
+    <section>
+        <h2>Dlaczego tak się dzieje?</h2>
+        <ul>
+            <li>ograniczona ilość pamięci</li>
+            <li>większość ułamków dziesiętnych nie da się przedstawić za pomocą ułamków binarnych</li>
+        </ul>
+        <!--pre><code>>>> sys.float_info
+sys.float_info(
+    max=1.7976931348623157e+308, max_exp=1024, max_10_exp=308,
+    min=2.2250738585072014e-308, min_exp=-1021, min_10_exp=-307,
+    dig=15, mant_dig=53, epsilon=2.220446049250313e-16, radix=2,
+    rounds=1)</code></pre-->
+
+        <aside class="notes">
+            Ograniczona pamięć nie tyczy się tylko ułamków nie wymiernych ale większości ułamków dziesiętnych.
+            Im większa precyzja która powiązana jest z liczbą pamięci tym mniejszy błąd. Jak wspomniałem wcześniej
+            precyzja floata w pythoonie to 53 czyli jest to podwójna precyzja.
+
+            Ciekawostką jest, że pierwszy standard floating points IEEE 754 napisany w 1985r. zakładał możliwość
+            używania artmetyki liczb 2 i 10 ale dopiero w 2005 IBM skonstruował procesor z900 który żeczywiście
+            działał na liczbach dziesiętnych.
+        </aside>
+    </section>
+</section>
